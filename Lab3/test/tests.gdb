@@ -84,6 +84,21 @@ continue 2
 expectPORTB 0x02
 checkResult
 
+test "PIND: 0x46, PINB: 0x00 => PORTB: 0x02"
+setPIND 0x46
+setPINB 0x00
+continue 2
+expectPORTB 0x02
+checkResult
+
+test "PIND: 0x23, PINB: 0x00 => PORTB: 0x02"
+setPIND 0x23
+setPINB 0x00
+continue 2
+expectPORTB 0x02
+checkResult
+
+
 # Report on how many tests passed/tests ran
 set $passed=$tests-$failed
 eval "shell echo Passed %d/%d tests.\n",$passed,$tests

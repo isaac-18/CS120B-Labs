@@ -28,7 +28,10 @@ int main(void) {
 	weight = tmpD + tmpB;
 	tmpB = 0;
 
-	if (weight >= 70) {
+	if (weight == 35) {
+		tmpB = 0x02;
+	}
+	else if (weight >= 70) {
 		tmpB = 0x02;
 	}
 	else if ((weight > 5) && (weight < 70)) {
