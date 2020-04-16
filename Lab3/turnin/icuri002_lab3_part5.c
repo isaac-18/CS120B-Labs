@@ -15,20 +15,24 @@
 int main(void) {
     /* Insert DDR and PORT initializations */
     DDRD = 0x00; PORTD = 0xFF;	// Configure port A's 8 pins as inputs
-    DDRB = 0xFF; PORTB = 0x00;	// Configure port B's 8 pins as outputs; intialize to 0s
+    DDRB = 0xFE; PORTB = 0x01;	// Configure port B's 7 pins as outputs and LSB as input
 
     unsigned char tmpD = 0x00;
     unsigned char tmpB = 0x00;
+    unsigned short weight = 0x00;
 
     while (1) {
 	tmpD = PIND & 0xFF;
-	tmpB = 0x00;
+	tmpB = PINB & 0x01;
 	
-	if ((tmpD > 5) && (tmpD < 70)) {
-		tmpB = 0x04;
-	}
-	else if (tmpD >= 70 ) {
+	weight = tmpD + tmpB;
+	tmpB = 0;
+
+	if (weight >= 70) {
 		tmpB = 0x02;
+	}
+	else if ((weight > 5) && (weight < 70)) {
+		tmpB = 0x04;
 	}
 	PORTB = tmpB;
     }

@@ -44,8 +44,9 @@ continue 2
 expectPORTB 0x02
 checkResult
 
-test "PIND: 0x05 => PORTB: 0x00"
-setPIND 0x05
+test "PIND: 0x04, PINB: 0x01 => PORTB: 0x00"
+setPIND 0x04
+setPINB 0x01
 continue 2
 expectPORTB 0x00
 checkResult
@@ -54,6 +55,33 @@ test "PIND: 0x2A => PORTB: 0x04"
 setPIND 0x2A
 continue 2
 expectPORTB 0x04
+checkResult
+
+test "PIND: 0x46 => PORTB: 0x02"
+setPIND 0x46
+continue 2
+expectPORTB 0x02
+checkResult
+
+test "PIND: 0x45, PINB: 0x01 => PORTB: 0x02"
+setPIND 0x45
+setPINB 0x01
+continue 2
+expectPORTB 0x02
+checkResult
+
+test "PIND: 0x05, PINB: 0x01 => PORTB: 0x04"
+setPIND 0x05
+setPINB 0x01
+continue 2
+expectPORTB 0x04
+checkResult
+
+test "PIND: 0xFF, PINB: 0x01 => PORTB: 0x02"
+setPIND 0xFF
+setPINB 0x01
+continue 2
+expectPORTB 0x02
 checkResult
 
 # Report on how many tests passed/tests ran
