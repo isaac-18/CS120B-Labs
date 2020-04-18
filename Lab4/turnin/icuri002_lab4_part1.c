@@ -2,7 +2,10 @@
  *  Partner(s) Name: 
  *	Lab Section: 024
  *	Assignment: Lab #4  Exercise #1
- *	Exercise Description: [optional - include for your own benefit]
+ *	Exercise Description: PB0 and PB1 each connect to an LED, and PB0's LED is initially on.
+ *	Pressing a button connected to PA0 turns off PB0's LED and turns on PB1's LED, staying 
+ *	that way after button release. Pressing the button again turns off PB1's LED and turns 
+ *	on PB0's LED. 
  *
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
