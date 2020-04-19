@@ -27,30 +27,30 @@ echo ======================================================\n
 echo Running all tests..."\n\n
 
 # Example test:
-test "PINA: 0x00, 0x01 => PORTB: 0x02, state: ON_Press"
+test "PINA: 0x00 => PORTC: 0x07, state: Init"
 # Set inputs
 set state = Start
 setPINA 0x00
 # Continue for several ticks
 continue 2
-setPINA 0x01
-continue 2
 # Set expect values
-expectPORTB 0x02
-expect state ON_Press
+expectPORTC 0x07
+expect state Init
 # Check pass/fail
 checkResult
 
 # Add tests below
-test "PINA: 0x00 => PORTB: 0x01, state: OFF_Release"
+test "PINA: 0x00, 0x01 => PORTC: 0x08, state: Wait"
 set state = Start
 setPINA 0x00
 continue 2
-expectPORTB 0x01
-expect state OFF_Release
+setPINA 0x01
+continue 2
+expectPORTC 0x08
+expect state Wait
 checkResult
 
-test "PINA: 0x00, 0x01, 0x00, 0x01, 0x00  => PORTB: 0x01, state: OFF_Release"
+test "PINA: 0x00, 0x01, 0x00, 0x01, 0x00  => PORTC: 0x09, state: Both_Released"
 set state = Start
 setPINA 0x00
 continue 2
@@ -62,18 +62,52 @@ setPINA 0x01
 continue 2
 setPINA 0x00
 continue 2
-expectPORTB 0x01
-expect state OFF_Release
+expectPORTC 0x09
+expect state Both_Released
 checkResult
 
-test "PINA: 0x01, 0x00 => PORTB: 0x02, state: ON_Release"
-set state = ON_Press
+test "PINA: 0x01, 0x03 => PORTC: 0x00, state: Reset"
+set state = Start
+setPINA 0x01
+continue 2
+setPINA 0x03
+continue 2
+expectPORTC 0x00
+expect state Reset
+checkResult
+
+test "PINA: 0x00, 0x02 => PORTC: 0x06, state: Wait"
+set state = Start
+setPINA 0x00
+continue 2
+setPINA 0x02
+continue 2
+expectPORTC 0x06
+expect state Wait
+checkResult
+
+test "PINA: 0x02, 0x00, 0x03 => PORTC: 0x00, state: Reset"
+set state = Start
 setPINA 0x01
 continue 2
 setPINA 0x00
 continue 2
-expectPORTB 0x02
-expect state ON_Release
+setPINA 0x03
+continue 2
+expectPORTC 0x00
+expect state Reset
+checkResult
+
+test "PINA: 0x01, 0x00, 0x02 => PORTC: 0x07, state: Wait"
+set state = Start
+setPINA 0x01
+continue 2
+setPINA 0x00
+continue 2
+setPINA 0x02
+continue 0x02
+expectPORTC 0x07
+expect state Wait
 checkResult
 
 # Report on how many tests passed/tests ran

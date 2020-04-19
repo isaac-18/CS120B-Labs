@@ -1,7 +1,7 @@
 /*	Author: icuri002
  *  Partner(s) Name: 
  *	Lab Section: 024
- *	Assignment: Lab #4  Exercise #1
+ *	Assignment: Lab #4  Exercise #2
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
@@ -12,49 +12,79 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States {Start, OFF_Release, ON_Press, ON_Release, OFF_Press} state;
-unsigned char A0;
-unsigned char tmpB;
+enum States {Start, Init, Increment, Decrement, Reset, Wait, Both_Released} state;
+unsigned char A;
+unsigned char tmpC;
 
 void tick() {
 	switch(state) {
 		case Start:
-			state = OFF_Release;
+			state = Init;
 			break;
 
-		case OFF_Release:
-			if (A0) {
-				state = ON_Press;
+		case Init:
+			if (A == 0x01) {
+				state = Increment;
 			}
-			else if (!A0) {
-				state = OFF_Release;
+			else if (A == 0x02) {
+				state = Decrement;
 			}
-			break;
-
-		case ON_Press:
-			if (!A0) {
-				state = ON_Release;
+			else if (A == 0x03) {
+				state = Reset;
 			}
-			else if (A0) {
-				state = ON_Press;
-			}	
-			break;
-
-		case ON_Release:
-			if (A0) {
-				state = OFF_Press;
-			}
-			else if (!A0) {
-				state = ON_Release;
+			else if (A == 0x00) {
+				state = Init;
 			}
 			break;
 
-		case OFF_Press:
-			if (!A0) {
-				state = OFF_Release;
+	// Left off: Where to initialize C to 0x07? Also is it C or tmpC?
+		case Increment:
+			state = Wait;
+			break;
+
+		case Decrement:
+			state = Wait;
+			break;
+
+		case Wait:
+			if (A == 0x03) {
+				state = Reset;
 			}
-			else if (A0) {
-				state = OFF_Press;
+			else if (A == 0x00) {
+				state = Both_Released;
+			}
+			else {
+				state = Wait;
+			}
+			break;
+
+		case Both_Released:
+			if (A == 0x03) {
+				state = Reset;
+			}
+			else if (A == 0x01) {
+				state = Increment;
+			}
+			else if (A == 0x02) {
+				state = Decrement;
+			}
+			else if (A == 0x00) {
+				state = Both_Released;
+			}
+			break;
+
+		case Reset:
+			if (A == 0x01) {
+				state = Increment;
+			}
+			else if (A == 0x02) {
+				state = Decrement;
+			}
+			else if (A == 0x03) {
+				state = Reset;
+			}
+			else if (A == 0x00) {
+				state = Both_Released;
 			}
 			break;
 
@@ -64,19 +94,25 @@ void tick() {
 	}
 	
 	switch(state) {
-		case OFF_Release:
-			tmpB = 0x01;	
+		case Init:
+			tmpC = 0x07;	
 			break;
 
-		case ON_Press:
-			tmpB = 0x02;
+		case Increment:
+			if (tmpC < 9) {
+				tmpC = tmpC + 1;
+			}
 			break;
 
-		case ON_Release:
+		case Decrement:
+			if (tmpC > 0) {
+				tmpC = tmpC - 1;
+			}
 			break;
 
-		case OFF_Press:
-			tmpB = 0x01;
+		case Reset:
+			tmpC = 0x00;
+			break;
 
 		default:
 			break;
@@ -87,19 +123,16 @@ void tick() {
 int main(void) {
     /* Insert DDR and PORT initializations */
     DDRA = 0x00; PORTA = 0xFF;	// Configure as inputs
-    DDRB = 0xFF; PORTB = 0x01;	// Configure as outputs; initialize B0 to 1	
+    DDRC = 0xFF; PORTC = 0x00;	// Configure as outputs; initialize C to 7	
 
-//    unsigned char tmpA;
-//    unsigned char tmpB;
-
-//    B = 0x01;
     state = Start;
-    
+    tmpC = 0x07; 
+   
     /* Insert your solution below */
     while (1) {
-	A0 = PINA & 0x01;
+	A = PINA & 0x03;
 	tick();	
-	PORTB = tmpB;
+	PORTC = tmpC;
     }
     return 1;
 }
