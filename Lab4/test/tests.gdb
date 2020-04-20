@@ -83,6 +83,25 @@ expectPORTC 0x01
 expect state Locked
 checkResult
 
+test "PINA: 0x04, 0x00, 0x01, 0x04, 0x00, 0x01 => PORTB: 0x00, PORTC: 0x01, state: Locked"
+set state = Start
+setPINA 0x04
+continue 2
+setPINA 0x00
+continue 2
+setPINA 0x01
+continue 2
+setPINA 0x04
+continue 2
+setPINA 0x00
+continue 2
+setPINA 0x01
+continue 2
+expectPORTB 0x00
+expectPORTC 0x01
+expect state Locked
+checkResult
+
 # Report on how many tests passed/tests ran
 set $passed=$tests-$failed
 eval "shell echo Passed %d/%d tests.\n",$passed,$tests

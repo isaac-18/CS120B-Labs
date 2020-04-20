@@ -1,7 +1,7 @@
 /*	Author: icuri002
  *  Partner(s) Name: 
  *	Lab Section: 024
- *	Assignment: Lab #4  Exercise #3
+ *	Assignment: Lab #4  Exercise #4
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
@@ -12,10 +12,11 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States {Start, Locked, Hash_Pressed, Wait1, Wait2, Wait3, Hash_Released, Y_Pressed, Unlocked} state;
+enum States {Start, Locked, Hash_Pressed, Wait1, Wait2, Getting_Input, Hash_Released, Y_Pressed, Unlocked} state;
 unsigned char A;
 unsigned char B;
 unsigned char C;
+unsigned char isUnlocked;
 
 void tick() {
 	switch(state) {
@@ -73,28 +74,27 @@ void tick() {
 			break;
 	
 		case Y_Pressed:
-		//	state = Wait3;		// Assuming that once Y is pressed system unlocks
-			if ((A & 0x80) == 0x80) {
+			// Assuming that once Y is pressed system unlocks
+	/*		if ((A & 0x80) == 0x80) {
 				state = Locked;
 			}
 			else {
 				state = Y_Pressed;
 			}
-			break;			// regardless of following input
-/*
-		case Wait3:
+	*/
 			state = Unlocked;
-			break;
+			break;			// regardless of following input
 
 		case Unlocked:
-			if ((A & 0x80) == 0x80) {
+			if (((A & 0x80) == 0x80) || isUnlocked) {
 				state = Locked;
 			}
 			else {
 				state = Unlocked;
 			}
 			break;
-*/
+
+
 		default:
 			state = Start;
 			break;
@@ -119,11 +119,12 @@ void tick() {
 			C = 0x04;
 			break;
 
-/*		case Unlocked:
+		case Unlocked:
 			B = 0x01;
 			C = 0x05;
+			isUnlocked = !(isUnlocked);
 			break;
-*/
+
 		default:
 			break;
 	}
@@ -139,6 +140,7 @@ int main(void) {
     state = Start;
     B = 0x00;	// Assumed to be initially locked
     C = 0x01; 	// Starting state is Locked i.e. 1
+    isUnlocked = 0x00;
    
     /* Insert your solution below */
     while (1) {
