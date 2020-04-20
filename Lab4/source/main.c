@@ -74,12 +74,13 @@ void tick() {
 			break;
 	
 		case Unlocked:
-			if (((A & 0x80) == 0x80) || isUnlocked) {
+			if ((A == 0x80)) {
 				state = Locked;
 			}
 			else {
 				state = Unlocked;
 			}
+			//state = Unlocked;
 			break;
 
 
