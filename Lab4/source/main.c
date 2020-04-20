@@ -73,9 +73,15 @@ void tick() {
 			break;
 	
 		case Y_Pressed:
-			state = Wait3;		// Assuming that once Y is pressed system unlocks
+		//	state = Wait3;		// Assuming that once Y is pressed system unlocks
+			if ((A & 0x80) == 0x80) {
+				state = Locked;
+			}
+			else {
+				state = Y_Pressed;
+			}
 			break;			// regardless of following input
-
+/*
 		case Wait3:
 			state = Unlocked;
 			break;
@@ -88,7 +94,7 @@ void tick() {
 				state = Unlocked;
 			}
 			break;
-
+*/
 		default:
 			state = Start;
 			break;
@@ -109,14 +115,15 @@ void tick() {
 			break;
 
 		case Y_Pressed:
+			B = 0x01;
 			C = 0x04;
 			break;
 
-		case Unlocked:
+/*		case Unlocked:
 			B = 0x01;
 			C = 0x05;
 			break;
-
+*/
 		default:
 			break;
 	}
