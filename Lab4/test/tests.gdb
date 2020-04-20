@@ -27,87 +27,58 @@ echo ======================================================\n
 echo Running all tests..."\n\n
 
 # Example test:
-test "PINA: 0x00 => PORTC: 0x07, state: Init"
+test "PINA: 0x00 => PORTB: 0x00, PORTC = 0x01, state: Locked"
 # Set inputs
 set state = Start
 setPINA 0x00
 # Continue for several ticks
 continue 2
 # Set expect values
-expectPORTC 0x07
-expect state Init
+expectPORTB 0x00
+expectPORTC 0x01
+expect state Locked
 # Check pass/fail
 checkResult
 
 # Add tests below
-test "PINA: 0x00, 0x01 => PORTC: 0x08, state: Wait"
+test "PINA: 0x04, 0x00, 0x01 => PORTB: 0x01, PORTC: 0x05, state: Unlocked"
 set state = Start
+setPINA 0x04
+continue 2
 setPINA 0x00
 continue 2
-setPINA 0x01
+setPINA 0x02
 continue 2
-expectPORTC 0x08
-expect state Wait
+continue 2
+expectPORTB 0x01
+expectPORTC 0x05
+expect state Unlocked
 checkResult
 
-test "PINA: 0x00, 0x01, 0x00, 0x01, 0x00  => PORTC: 0x09, state: Both_Released"
+test "PINA: 0x04, 0x01 => PORTB:0x00, PORTC: 0x01, state: Locked"
 set state = Start
-setPINA 0x00
+setPINA 0x04
 continue 2
 setPINA 0x01
 continue 2 
+expectPORTB 0x00
+expectPORTC 0x01
+expect state Locked
+checkResult
+
+test "PINA: 0x04, 0x00, 0x01, 0x80 => PORTB: 0x00, PORTC: 0x01, state: Locked"
+set state = Start
+setPINA 0x04
+continue 2
 setPINA 0x00
 continue 2
 setPINA 0x01
 continue 2
-setPINA 0x00
+setPINA 0x80
 continue 2
-expectPORTC 0x09
-expect state Both_Released
-checkResult
-
-test "PINA: 0x01, 0x03 => PORTC: 0x00, state: Reset"
-set state = Start
-setPINA 0x01
-continue 2
-setPINA 0x03
-continue 2
-expectPORTC 0x00
-expect state Reset
-checkResult
-
-test "PINA: 0x00, 0x02 => PORTC: 0x06, state: Wait"
-set state = Start
-setPINA 0x00
-continue 2
-setPINA 0x02
-continue 2
-expectPORTC 0x06
-expect state Wait
-checkResult
-
-test "PINA: 0x02, 0x00, 0x03 => PORTC: 0x00, state: Reset"
-set state = Start
-setPINA 0x01
-continue 2
-setPINA 0x00
-continue 2
-setPINA 0x03
-continue 2
-expectPORTC 0x00
-expect state Reset
-checkResult
-
-test "PINA: 0x01, 0x00, 0x02 => PORTC: 0x07, state: Wait"
-set state = Start
-setPINA 0x01
-continue 2
-setPINA 0x00
-continue 2
-setPINA 0x02
-continue 0x02
-expectPORTC 0x07
-expect state Wait
+expectPORTB 0x00
+expectPORTC 0x01
+expect state Locked
 checkResult
 
 # Report on how many tests passed/tests ran

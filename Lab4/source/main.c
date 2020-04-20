@@ -1,7 +1,7 @@
 /*	Author: icuri002
  *  Partner(s) Name: 
  *	Lab Section: 024
- *	Assignment: Lab #4  Exercise #2
+ *	Assignment: Lab #4  Exercise #3
  *	Exercise Description: [optional - include for your own benefit]
  *
  *	I acknowledge all content contained herein, excluding template or example
@@ -12,79 +12,76 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States {Start, Init, Increment, Decrement, Reset, Wait, Both_Released} state;
+enum States {Start, Locked, Hash_Pressed, Wait1, Wait2, Hash_Released, Y_Pressed, Unlocked} state;
 unsigned char A;
-unsigned char tmpC;
+unsigned char B;
+unsigned char C;
 
 void tick() {
 	switch(state) {
 		case Start:
-			state = Init;
+			state = Locked;
 			break;
 
-		case Init:
-			if (A == 0x01) {
-				state = Increment;
-			}
-			else if (A == 0x02) {
-				state = Decrement;
-			}
-			else if (A == 0x03) {
-				state = Reset;
-			}
-			else if (A == 0x00) {
-				state = Init;
-			}
-			break;
-
-	// Left off: Where to initialize C to 0x07? Also is it C or tmpC?
-		case Increment:
-			state = Wait;
-			break;
-
-		case Decrement:
-			state = Wait;
-			break;
-
-		case Wait:
-			if (A == 0x03) {
-				state = Reset;
-			}
-			else if (A == 0x00) {
-				state = Both_Released;
+		case Locked:
+			if ((A & 0x04) == 0x04) {
+				state = Hash_Pressed;
 			}
 			else {
-				state = Wait;
+				state = Locked;
 			}
 			break;
 
-		case Both_Released:
-			if (A == 0x03) {
-				state = Reset;
+		case Hash_Pressed:
+	/*		if (A == 0x00) {
+				state = Hash_Released;
 			}
-			else if (A == 0x01) {
-				state = Increment;
+			else {
+				state = Locked;
 			}
-			else if (A == 0x02) {
-				state = Decrement;
-			}
-			else if (A == 0x00) {
-				state = Both_Released;
-			}
+	*/	
+			state = Wait1;
 			break;
 
-		case Reset:
-			if (A == 0x01) {
-				state = Increment;
+		case Wait1:
+			if (A == 0x00) {
+				state = Hash_Released;
 			}
-			else if (A == 0x02) {
-				state = Decrement;
+			else {
+				state = Locked;
 			}
-			else if (A == 0x03) {
-				state = Reset;
+			break;
+	
+		case Hash_Released:
+	/*		if ((A & 0x02) == 0x02) {
+				state = Y_Pressed;
 			}
-			else if (A == 0x00) {
-				state = Both_Released;
+			else {
+				state = Locked;
+			}
+	*/	
+			state = Wait2;
+			break;
+
+		case Wait2:	
+			if ((A & 0x02) == 0x02) {
+				state = Y_Pressed;
+			}
+			else {
+				state = Locked;
+			}
+			break;
+	
+		case Y_Pressed:
+			state = Unlocked;	// Assuming that once Y is pressed system unlocks
+			break;			// regardless of following input
+
+		case Unlocked:
+			if ((A & 0x80) == 0x80) {
+				state = Locked;
+			}
+			else {
+				state = Unlocked;
 			}
 			break;
 
@@ -94,24 +91,26 @@ void tick() {
 	}
 	
 	switch(state) {
-		case Init:
-			tmpC = 0x07;	
+		case Locked:
+			B = 0x00;
+			C = 0x01;	
 			break;
 
-		case Increment:
-			if (tmpC < 9) {
-				tmpC = tmpC + 1;
-			}
+		case Hash_Pressed:
+			C = 0x02;
 			break;
 
-		case Decrement:
-			if (tmpC > 0) {
-				tmpC = tmpC - 1;
-			}
+		case Hash_Released:
+			C = 0x03;
 			break;
 
-		case Reset:
-			tmpC = 0x00;
+		case Y_Pressed:
+			C = 0x04;
+			break;
+
+		case Unlocked:
+			B = 0x01;
+			C = 0x05;
 			break;
 
 		default:
@@ -123,16 +122,19 @@ void tick() {
 int main(void) {
     /* Insert DDR and PORT initializations */
     DDRA = 0x00; PORTA = 0xFF;	// Configure as inputs
+    DDRB = 0xFF; PORTB = 0x00;	// Configure as outputs
     DDRC = 0xFF; PORTC = 0x00;	// Configure as outputs; initialize C to 7	
 
     state = Start;
-    tmpC = 0x07; 
+    B = 0x00;	// Assumed to be initially locked
+    C = 0x01; 	// Starting state is Locked i.e. 1
    
     /* Insert your solution below */
     while (1) {
-	A = PINA & 0x03;
+	A = PINA & 0x87;
 	tick();	
-	PORTC = tmpC;
+	PORTB = B;
+	PORTC = C;
     }
     return 1;
 }
