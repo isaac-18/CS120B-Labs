@@ -41,7 +41,7 @@ expect state Locked
 checkResult
 
 # Add tests below
-test "PINA: 0x04, 0x00, 0x01 => PORTB: 0x01, PORTC: 0x05, state: Unlocked"
+test "PINA: 0x04, 0x00, 0x02 => PORTB: 0x01, PORTC: 0x05, state: Unlocked"
 set state = Start
 setPINA 0x04
 continue 2
@@ -49,11 +49,14 @@ setPINA 0x00
 continue 2
 setPINA 0x02
 continue 2
+print state
 continue 2
+print state
 expectPORTB 0x01
 expectPORTC 0x05
 expect state Unlocked
 checkResult
+printPORTB x
 
 test "PINA: 0x04, 0x01 => PORTB:0x00, PORTC: 0x01, state: Locked"
 set state = Start
