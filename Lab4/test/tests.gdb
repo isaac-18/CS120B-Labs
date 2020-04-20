@@ -49,7 +49,7 @@ setPINA 0x00
 continue 2
 setPINA 0x02
 continue 2
-#print state
+print state
 expectPORTB 0x01
 #expectPORTC 0x05
 expectPORTC 0x04

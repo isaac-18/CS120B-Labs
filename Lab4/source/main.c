@@ -115,7 +115,7 @@ void tick() {
 			break;
 
 		case Y_Pressed:
-			B = 0x01;
+		//	B = 0x01;
 			C = 0x04;
 			break;
 
@@ -140,7 +140,7 @@ int main(void) {
     state = Start;
     B = 0x00;	// Assumed to be initially locked
     C = 0x01; 	// Starting state is Locked i.e. 1
-    isUnlocked = 0x00;
+    isUnlocked = 0x01;
    
     /* Insert your solution below */
     while (1) {
