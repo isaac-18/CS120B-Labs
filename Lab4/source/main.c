@@ -12,7 +12,7 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States {Start, Locked, Hash_Pressed, Wait1, Wait2, Getting_Input, Hash_Released, Y_Pressed, Unlocked} state;
+enum States {Start, Locked, Hash_Pressed, Wait1, Wait2, Getting_Input, Hash_Released, Unlocked} state;
 unsigned char A;
 unsigned char B;
 unsigned char C;
@@ -66,25 +66,13 @@ void tick() {
 
 		case Wait2:	
 			if ((A & 0x02) == 0x02) {
-				state = Y_Pressed;
+				state = Unlocked;
 			}
 			else {
 				state = Locked;
 			}
 			break;
 	
-		case Y_Pressed:
-			// Assuming that once Y is pressed system unlocks
-	/*		if ((A & 0x80) == 0x80) {
-				state = Locked;
-			}
-			else {
-				state = Y_Pressed;
-			}
-	*/
-			state = Unlocked;
-			break;			// regardless of following input
-
 		case Unlocked:
 			if (((A & 0x80) == 0x80) || isUnlocked) {
 				state = Locked;
@@ -114,14 +102,9 @@ void tick() {
 			C = 0x03;
 			break;
 
-		case Y_Pressed:
-		//	B = 0x01;
-			C = 0x04;
-			break;
-
 		case Unlocked:
 			B = 0x01;
-			C = 0x05;
+			C = 0x04;
 			isUnlocked = !(isUnlocked);
 			break;
 
