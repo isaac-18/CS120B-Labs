@@ -1,8 +1,10 @@
 /*	Author: icuri002
  *  Partner(s) Name: 
  *	Lab Section: 024
- *	Assignment: Lab #4  Exercise #2
- *	Exercise Description: [optional - include for your own benefit]
+ *	Assignment: Lab #3  Exercise #2
+ *	Exercise Description: A car has a fuel-level sensor that sets PA3..PA0 to a value between
+ *	0 (empty) and 15 (full). A series of LEDs connected to PC5..PC0 should light to 
+ *	graphically indicate the fuel level.
  *
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
@@ -12,85 +14,46 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States {Start, Init, Alt_Flash1, Alt_Flash2} state;
-unsigned char A;
-unsigned char B;
-unsigned char i;
-
-void tick() {
-	switch(state) {
-		case Start:
-			state = Init;
-			break;
-
-		case Init:
-			if (A == 0x01) {
-				state = Alt_Flash1;
-			}
-			else {
-				state = Init;
-			}
-			break;
-
-		case Alt_Flash1:
-			if (A == 0x01) {
-				state = Alt_Flash1;
-			}
-			else if (A == 0x00) {
-				state = Alt_Flash2;
-			}
-			else {
-				state = Alt_Flash1;
-			}
-			break;
-
-		case Alt_Flash2:
-			if (A == 0x01) {
-				state = Alt_Flash1;
-			}
-			else if (A == 0x00) {
-				state = Alt_Flash2;
-			}
-			else {
-				state = Alt_Flash2;
-			}
-			break;
-		default:
-			state = Start;
-			break;
-	}
-	
-	switch(state) {
-		case Init:
-			B = 0x00;	
-			break;
-
-		case Alt_Flash1:
-			B = 0x15;
-			break;
-
-		case Alt_Flash2:
-			B = 0x2A;
-			break;
-		default:
-			break;
-	}
-}
-
-
 int main(void) {
     /* Insert DDR and PORT initializations */
-    DDRA = 0x00; PORTA = 0xFF;	// Configure as inputs
-    DDRB = 0xFF; PORTB = 0x00;	// Configure as outputs; initialize C to 7	
+    DDRA = 0x00; PORTA = 0xFF;	// Configure port A's 8 pins as inputs
+    DDRC = 0xFF; PORTC = 0x00;	// Configure port C's 8 pins as outputs; initialize to 0s
 
-    state = Start;
-    B = 0x00; 
-   
+    unsigned char tmpA = 0x00;
+    unsigned char tmpC = 0x00;
+    unsigned char lowFuel = 0x00;
+
     /* Insert your solution below */
     while (1) {
-	A = ~PINA & 0x01;
-	tick();	
-	PORTB = B;
+	tmpA = ~PINA & 0x0F;
+	tmpC = 0x00;
+
+	if (tmpA <= 4) {	// Low fuel
+		tmpC = 0x40; 
+
+		if ((tmpA == 1) || (tmpA == 2)) {
+			tmpC = tmpC | 0x20;	
+		}
+		else if ((tmpA == 3) || (tmpA == 4)) {
+			tmpC = tmpC | 0x30;
+		}
+	}
+	else {
+		if ((tmpA == 5) || (tmpA == 6)) {
+			tmpC = 0x38;
+		}
+		
+		else if ((tmpA >= 7) && (tmpA <= 9)) {
+			tmpC = 0x3C;
+		}
+		else if ((tmpA >= 10) && (tmpA <= 12)) {
+			tmpC = 0x3E;
+		} 	
+		else if ((tmpA >=13) && (tmpA <= 15)) {
+			tmpC = 0x3F;
+		}
+	} 
+	PORTC = tmpC;
     }
     return 1;
 }
