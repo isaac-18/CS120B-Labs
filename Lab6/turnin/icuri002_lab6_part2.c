@@ -16,7 +16,7 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States{Start, Blink1, Blink2, Button_Pressed, Button_Released} state;
+enum States{Start, Init, Blink1, Blink2, Button_Pressed, Button_Released} state;
 
 unsigned char A;
 unsigned char tmpB;
@@ -65,7 +65,10 @@ void TimerSet(unsigned long M) {
 void Tick() {
 	switch(state) {
 		case Start:
-			tmpB = 0x01;
+			state = Init;
+			break;
+
+		case Init:
 			state = Blink1;
 			break;
 
@@ -106,7 +109,7 @@ void Tick() {
 
 		case Button_Released:
 			if (A) {
-				state = Blink1;
+				state = Init;
 			}
 			else {
 				state = Button_Released;
@@ -120,6 +123,10 @@ void Tick() {
 
 	switch(state) {
 		case Start:
+			break;
+
+		case Init:
+			tmpB = 0x01;
 			break;
 
 		case Blink1:
@@ -146,7 +153,7 @@ int main(void) {
 	DDRB = 0xFF; PORTB = 0x00;
 	
 	state = Start;
-	tmpB = 0x01;
+	tmpB = 0x00;
 	TimerSet(300);
 	TimerOn();
 

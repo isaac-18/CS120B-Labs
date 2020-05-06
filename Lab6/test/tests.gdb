@@ -26,54 +26,26 @@
 echo ======================================================\n
 echo Running all tests..."\n\n
 
-# Example test:
-test "PINA: 0x00 => PORTB: 0x01, 0x02, 0x04, 0x02, 0x01, 0x02..."
-# Set inputs
-
-# Continue for several ticks
-
-# Set expect values
-#timeContinue
-expectPORTB 0x01
-timeContinue
-expectPORTB 0x02
-timeContinue
+test "PINA: 0xFF => PORTB: 0x04"
+set state = Start
+setPINA 0xFF
+timeContinue 3
 expectPORTB 0x04
-timeContinue
-expectPORTB 0x02
-timeContinue
-expectPORTB 0x01
-timeContinue
-expectPORTB 0x02
-timeContinue
-expectPORTB 0x04
-# Check pass/fail
 checkResult
 
-# Add tests below
-
-test "PINA 0x00, 0x01 => PORTB: 0x01, 0x02"
-set state = Start
-setPINA 0x00
-expectPORTB 0x01
-timeContinue
-setPINA 0x01
-expectPORTB 0x02
-timeContinue
-expectPORTB 0x02
-checkResult
-
-test "PINA: 0x01 => PORTB: 0x01, 0x02"
-set state = Start
-timeContinue
-setPINA 0x01
-timeContinue
-expectPORTB 0x01
-printPINA
+test "PINA: 0xFE => PORTB: 0x04"
+set state = Button_Released
+printPORTB
+setPINA 0xFE
 printPORTB
 timeContinue
+printPORTB
 timeContinue
 printPORTB
+timeContinue
+printPORTB
+timeContinue
+expectPORTB 0x04
 checkResult
 
 # Report on how many tests passed/tests ran
