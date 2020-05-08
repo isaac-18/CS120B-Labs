@@ -37,14 +37,27 @@ test "PINA: 0xFE => PORTB: 0x04"
 set state = Button_Released
 printPORTB
 setPINA 0xFE
+print state
 printPORTB
+
 timeContinue
+
+setPINA 0xFF
+print state
 printPORTB
+
 timeContinue
+
+print state
 printPORTB
+
 timeContinue
+
+print state
 printPORTB
-timeContinue
+
+#timeContinue
+
 expectPORTB 0x04
 checkResult
 

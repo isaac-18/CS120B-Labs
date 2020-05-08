@@ -1,11 +1,16 @@
-Breakpoint 1 at 0x4c0: file source/main.c, line 222.
+Breakpoint 1 at 0x394: file source/main.c, line 179.
 Note: automatically using hardware breakpoints for read-only addresses.
 ======================================================
 Running all tests..."
 
-"PINA: 0xFF => PORTB: 0x04"...
-	Expected 0x04 
-	PORTB '0x800025:	0x07
-"PINA: 0xFE => PORTB: 0x04"...test/tests.gdb:37: Error in sourced command file:
-No symbol "Button_Released" in current context.
+"PINA: 0xFF => PORTB: 0x04"..."PINA: 0xFE => PORTB: 0x04"...PORTB addr0x800025:	0x04
+$1 = Button_Released
+PORTB addr0x800025:	0x04
+$2 = Init
+PORTB addr0x800025:	0x01
+$3 = Blink1
+PORTB addr0x800025:	0x02
+$4 = Blink1
+PORTB addr0x800025:	0x04
+======================================================
 Remote doesn't know how to detach
