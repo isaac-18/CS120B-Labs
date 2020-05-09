@@ -16,11 +16,10 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States{Start, Init, Blink1, Blink2, Button_Pressed, Button_Released, temp} state;
+enum States{Start, Init, Blink1, Blink2, Button_Pressed, Button_Released} state;
 
 unsigned char A;
 unsigned char tmpB;
-unsigned char i;
 
 volatile unsigned char TimerFlag = 0;	// TimerISR() sets this to 1. C programmer should clear to 0.
 
@@ -109,25 +108,12 @@ void Tick() {
 			break;
 
 		case Button_Released:
-			if (A == 0x01) {
-			//	i = 0;
+			if (A) {
 				state = Init;
 			}
 			else {
 				state = Button_Released;
 			}
-			break;
-
-		case temp:
-/*			if (i >= 1) {
-				state = Init;
-			}
-			else if (i < 1) {
-				++i;
-				state = temp;
-			}
-*/
-			state = Init;
 			break;
 
 		default:
@@ -155,10 +141,6 @@ void Tick() {
 			break;
 
 		case Button_Released:
-			break;
-
-		case temp:
-			tmpB = 0x01;
 			break;
 
 		default:
