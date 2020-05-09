@@ -1,0 +1,8 @@
+Breakpoint 1 at 0x5b2: file source/main.c, line 230.
+Note: automatically using hardware breakpoints for read-only addresses.
+======================================================
+Running all tests..."
+
+"PINA: 0x00, tmpB: 0x00"..."PINA: 0x00, 0x01, 0x01 => tmpB: 0x02"...
+	Expected 0x02 but got tmpB:0======================================================
+Remote doesn't know how to detach
