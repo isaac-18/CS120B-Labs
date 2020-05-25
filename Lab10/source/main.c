@@ -132,7 +132,7 @@ void Tick_BlinkLED() {
 }
 
 void Tick_CombineLEDs() {
-	B = threeLEDs | (blinkingLED << 3) | speaker;
+	B = threeLEDs | ((blinkingLED & 0x01) << 3) | speaker;
 }
 
 enum S_States {S_Start, S_Wait, S_On, S_Off} S_State;
@@ -177,11 +177,6 @@ void Tick_Speaker() {
 		case S_On:
 			speaker = 0x10;
 			break;
-
-		case S_Off:
-			speaker = 0x00;
-			break;
-
 		default:
 			speaker = 0x00;
 			break;
