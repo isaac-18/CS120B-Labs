@@ -1,9 +1,10 @@
 /*	Author: icuri002
  *  Partner(s) Name: 
  *	Lab Section:024
- *	Assignment: Lab #10  Exercise #2
+ *	Assignment: Lab #10  Exercise #3
  *	Exercise Description: shared SMs that blink one LED in one sec interval and three
- *	others in 300 ms interval
+ *	others in 300 ms interval. Now includes speaker that sounds on and off every 2ms 
+ *	while switch is on.
  *
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
@@ -15,9 +16,11 @@
 #endif
 
 volatile unsigned char TimerFlag = 0;
+unsigned char A;
 unsigned char B;
 unsigned char threeLEDs;
 unsigned char blinkingLED;
+unsigned char speaker;
 
 unsigned char TL_cnt;
 unsigned char BL_cnt;
@@ -161,7 +164,50 @@ void Tick_CombineLEDs() {
 
 	switch(CL_State) {
 		case CL_Combine:
-			B = threeLEDs | (blinkingLED << 3);
+			B = threeLEDs | (blinkingLED << 3) | (speaker << 4);
+			break;
+
+		default:
+			break;
+	}
+}
+
+enum S_States {S_Start, S_Init, S_Sound} S_State;
+void Tick_Speaker() {
+	switch(S_State) {
+		case S_Start:
+			S_State = S_Init;
+			break;
+
+		case S_Init:
+			if (A) {
+				S_State = S_Sound;
+			}
+			else {
+				S_State = S_Init;
+			}
+			break;
+
+		case S_Sound:
+			if (A) {
+				S_State = S_Sound;
+			}
+			else {
+				S_State = S_Init;
+			}	
+			break;
+
+		default:
+			break;
+	}
+
+	switch(S_State) {
+		case S_Init:
+			speaker = 0x00;
+			break;
+
+		case S_Sound:
+			speaker = ~speaker;
 			break;
 
 		default:
@@ -171,25 +217,44 @@ void Tick_CombineLEDs() {
 
 int main(void) {
     /* Insert DDR and PORT initializations */
+    DDRA = 0x00; PORTA = 0xFF;
     DDRB = 0xFF; PORTB = 0x00;
 
     /* Insert your solution below */
-    TimerSet(100);
+    unsigned long TL_elapsedTime = 150;
+    unsigned long BL_elapsedTime = 500;
+    const unsigned long timerPeriod = 2;
+
+    TimerSet(timerPeriod);
     TimerOn();
 
     threeLEDs = 0x01;
     blinkingLED = 0x00;
+    speaker = 0x00;
 
     TL_State = TL_Start;
     BL_State = BL_Start;
     CL_State = CL_Start;
 
     while (1) {
-	Tick_ThreeLEDs();
-	Tick_BlinkLED();
+	A = ~PINA & 0x04;
+
+	if (TL_elapsedTime >= 150) {
+		Tick_ThreeLEDs();
+		TL_elapsedTime = 0;
+	}
+	if (BL_elapsedTime >= 500) {
+		Tick_BlinkLED();
+		TL_elapsedTime = 0;
+	}
+	Tick_Speaker();
 	Tick_CombineLEDs();
+	
 	while(!TimerFlag) {}
 	TimerFlag = 0;
+	TL_elapsedTime += timerPeriod;
+	BL_elapsedTime += timerPeriod;
+
 	PORTB = B;
     }
     return 1;
