@@ -78,29 +78,15 @@ void Tick_ThreeLEDs () {
 			else {
 				threeLEDs = threeLEDs << 1;
 			}
-			TL_cnt = 0;
-			TL_State = TL_Wait;
+			TL_State = TL_Blink;
 			break;
 		
-		case TL_Wait:
-			if (TL_cnt >= 3) {
-				TL_State = TL_Blink;
-			}
-			else {
-				++TL_cnt;
-			}
-			break;
-
 		default:
 			TL_State = TL_Start;
 			break;
 	}
 
 	switch(TL_State) {
-		case TL_Wait:
-			++TL_cnt;
-			break;
-
 		default:
 			break;
 	}
@@ -114,17 +100,7 @@ void Tick_BlinkLED() {
 			break;
 
 		case BL_Blink:
-			BL_cnt = 0;
-			BL_State = BL_Wait;
-			break;
-
-		case BL_Wait:
-			if (BL_cnt >= 10) {
-				BL_State = BL_Blink;
-			}
-			else {
-				BL_State = BL_Wait;
-			}
+			BL_State = BL_Blink;
 			break;
 
 		default:
@@ -136,11 +112,7 @@ void Tick_BlinkLED() {
 		case BL_Blink:
 			blinkingLED = ~blinkingLED;
 			break;
-
-		case BL_Wait:
-			++BL_cnt;
-			break;
-
+		
 		default:
 			break;
 	}
@@ -203,7 +175,7 @@ void Tick_Speaker() {
 
 	switch(S_State) {
 		case S_Init:
-			speaker = 0x00;
+			speaker = 0x01;
 			break;
 
 		case S_Sound:
@@ -230,7 +202,7 @@ int main(void) {
 
     threeLEDs = 0x01;
     blinkingLED = 0x00;
-    speaker = 0x00;
+    //speaker = 0x01;
 
     TL_State = TL_Start;
     BL_State = BL_Start;
