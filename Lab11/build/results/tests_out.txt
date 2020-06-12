@@ -1,0 +1,8 @@
+Breakpoint 1 at 0x510: file source/main.c, line 161.
+Note: automatically using hardware breakpoints for read-only addresses.
+======================================================
+Running all tests..."
+
+"Current state"...Error detected on fd 6
+test/tests.gdb:31: Error in sourced command file:
+Remote communication error.  Target disconnected.: Interrupted system call.
